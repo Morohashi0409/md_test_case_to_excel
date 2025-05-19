@@ -45,8 +45,8 @@ class ExcelWriter:
 
         # ワークシートの取得と行・列の挿入
         worksheet = writer.sheets[self.config.excel_settings.sheet_name.summary]
-        worksheet.insert_rows(0)
-        worksheet.insert_cols(0)
+        worksheet.insert_rows(1)
+        worksheet.insert_cols(1)
 
         # レイアウト調整（ヘッダー色）
         header_font = Font(name=self.config.excel_settings.font_name, bold=True, color="ffffff")
@@ -144,7 +144,7 @@ class ExcelWriter:
             df (pd.DataFrame):    convert_md_to_df()により生成されたデータフレーム
         """
         try:
-            with pd.ExcelWriter(output_path) as writer:
+            with pd.ExcelWriter(output_path, engine='openpyxl') as writer:
                 self.__write_summary_sheet(writer)
                 self.__write_test_specification_sheet(writer, merge_cells)
         except PermissionError:
