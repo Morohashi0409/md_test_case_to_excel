@@ -3,7 +3,7 @@ Markdownで書かれたテスト仕様書をエクセルファイルに変換し
 
 Usage:
     python converter.py -h
-    python converter.py [-f] <file> [-m]
+    python converter.py [-f] <file> [--no-merge]
 """
 
 import argparse
@@ -16,7 +16,7 @@ from src.markdown import MarkdownTestParser, read_markdown_file
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Markdownで書かれたテスト仕様書をエクセルファイルに変換します。")
     parser.add_argument("-f", "--file", type=str, required=True, help="入力ファイルパス")
-    parser.add_argument("-m", "--merge", action="store_true", help="セルをマージするか")
+    parser.add_argument("--no-merge", action="store_true", help="セルをマージしない場合に指定")
     args = parser.parse_args()
 
     config = load_config(Path(__file__).parent.joinpath("config.yaml"))
@@ -27,5 +27,5 @@ if __name__ == "__main__":
     print(f"-------\n{df}\n-------")
 
     writer = ExcelWriter(df, config)
-    output_path = writer(Path(args.file).parent.joinpath(f"{Path(args.file).stem}.xlsx"), merge_cells=args.merge)
+    output_path = writer(Path(args.file).parent.joinpath(f"{Path(args.file).stem}.xlsx"), merge_cells=not args.no_merge)
     print(f"\nDone! The file is saved at `{output_path}`.")

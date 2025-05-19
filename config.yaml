@@ -7,58 +7,42 @@
 #     vertical: セル内の文字の垂直位置。center, top, bottom
 #     multi-idx: 複数のインデックスを持つかどうか。true, false
 columns:
+  number:
+    name: 'NO'
+    length: 6
+    horizontal: 'center'
+    vertical: 'center'
   section:
-    name: '大項目'
+    name: '大分類'
     md_pattern: '^## (.+)$'
     length: 20
     horizontal: 'left'
     vertical: 'top'
     multi-idx: true
   subsection:
-    name: '中項目'
+    name: '中分類'
     md_pattern: '^### (.+)$'
     length: 15
     horizontal: 'left'
     vertical: 'top'
     multi-idx: true
   testcase:
-    name: '小項目'
-    md_pattern: '^#### (正常|異常|準正常) (OK|NG|--|未|未実施) (.+)$'
+    name: '小分類'
+    md_pattern: '^#### (.+)$'
     length: 50
     horizontal: 'left'
     vertical: 'top'
     multi-idx: true
-  number:
-    name: 'No.'
-    length: 6
-    horizontal: 'center'
-    vertical: 'center'
-  pos-neg:
-    name: "正常系\n／異常系" # 改行したい場合はダブルクォーテーションで囲む
-    length: 10
-    horizontal: 'center'
-    vertical: 'center'
-  result:
-    name: 'テスト結果'
-    length: 10
-    horizontal: 'center'
-    vertical: 'center'
   step:
-    name: '確認手順'
+    name: '試験内容'
     md_pattern: '^\d+\. (.+)$'
     length: 70
     horizontal: 'left'
     vertical: 'top'
   expectation:
-    name: '期待値'
+    name: '確認事項'
     md_pattern: '^\* \[ \] (.+)$'
     length: 70
-    horizontal: 'left'
-    vertical: 'top'
-  notes:
-    name: '備考'
-    md_pattern: '^\- (.+)$'
-    length: 40
     horizontal: 'left'
     vertical: 'top'
 

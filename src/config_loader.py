@@ -16,15 +16,12 @@ class Column(BaseModel):
 
 
 class Columns(BaseModel):
+    number: Column = Field(...)
     section: Column = Field(...)
     subsection: Column = Field(...)
     testcase: Column = Field(...)
-    number: Column = Field(...)
-    pos_neg: Column = Field(..., alias="pos-neg")
-    result: Column = Field(...)
     step: Column = Field(...)
     expectation: Column = Field(...)
-    notes: Column = Field(...)
 
 
 class SheetName(BaseModel):
