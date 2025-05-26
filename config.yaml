@@ -51,3 +51,5 @@ excel_settings:
   sheet_name:
     summary: サマリー
     test: テスト仕様書
+    ut: 単体試験
+    it: 結合試験

@@ -3,7 +3,8 @@ Markdownで書かれたテスト仕様書をエクセルファイルに変換し
 
 Usage:
     python converter.py -h
-    python converter.py [-f] <file> [--no-merge] [--template] [--no-auto-width] [--no-auto-height] [--preserve-columns]
+    python converter.py [-f] <file> [--no-merge] [--template] [--no-auto-width] [--no-auto-height] [--preserve-columns] [--test-type <type>]
+    python converter.py [-f] <file> [--ut|--it]  # 単体試験・結合試験の略称
 """
 
 import argparse
@@ -22,6 +23,17 @@ if __name__ == "__main__":
     parser.add_argument("--no-auto-width", action="store_true", help="列幅の自動調整を無効にする場合に指定")
     parser.add_argument("--no-auto-height", action="store_true", help="行高の自動調整を無効にする場合に指定")
     parser.add_argument("--preserve-columns", action="store_true", help="既存ファイルのJ列以降の内容を保持する場合に指定")
+    
+    # テスト種別の指定方法（ショートカットと詳細オプションのグループ化）
+    test_type_group = parser.add_mutually_exclusive_group()
+    test_type_group.add_argument("--test-type", type=str, choices=["test", "ut", "it"], 
+                               default="test",
+                               help="テストの種別（test:テスト仕様書、ut:単体試験、it:結合試験）")
+    test_type_group.add_argument("--ut", action="store_const", const="ut", dest="test_type",
+                               help="単体試験シートに出力する（--test-type utのショートカット）")
+    test_type_group.add_argument("--it", action="store_const", const="it", dest="test_type",
+                               help="結合試験シートに出力する（--test-type itのショートカット）")
+                               
     args = parser.parse_args()
 
     config = load_config(Path(__file__).parent.joinpath("config.yaml"))
@@ -59,19 +71,31 @@ if __name__ == "__main__":
                                 template_path=template_path,
                                 auto_adjust_width=not args.no_auto_width,
                                 auto_adjust_height=not args.no_auto_height,
-                                preserve_additional_columns=args.preserve_columns)
+                                preserve_additional_columns=args.preserve_columns,
+                                test_type=args.test_type)
         else:  # 既存ファイルの上書き更新の場合
             output_path = writer(output_path, 
                                 merge_cells=not args.no_merge, 
                                 template_path=template_path,
                                 auto_adjust_width=not args.no_auto_width,
                                 auto_adjust_height=not args.no_auto_height,
-                                preserve_additional_columns=args.preserve_columns)
+                                preserve_additional_columns=args.preserve_columns,
+                                test_type=args.test_type)
     else:
         # 従来通りの処理 (新規ファイル作成)
         output_path = writer(output_path, 
                             merge_cells=not args.no_merge,
                             auto_adjust_width=not args.no_auto_width,
-                            auto_adjust_height=not args.no_auto_height)
+                            auto_adjust_height=not args.no_auto_height,
+                            test_type=args.test_type)
+    
+    # 出力したシート名を表示する
+    sheet_name = ""
+    if args.test_type == "ut":
+        sheet_name = config.excel_settings.sheet_name.ut
+    elif args.test_type == "it":
+        sheet_name = config.excel_settings.sheet_name.it
+    else:
+        sheet_name = config.excel_settings.sheet_name.test
         
-    print(f"\nDone! The file is saved at `{output_path}`.")
+    print(f"\nDone! The file is saved at `{output_path}` (シート: {sheet_name}).")

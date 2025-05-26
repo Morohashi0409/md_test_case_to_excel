@@ -147,6 +147,7 @@ class ExcelWriter:
                                          auto_adjust_width: bool = True,
                                          auto_adjust_height: bool = True,
                                          preserve_additional_columns: bool = False,
+                                         test_type: str = "test"  # デフォルトは "test" (テスト仕様書)
                                          ):
         """テスト仕様書をエクセルシートに書き込みます。
 
@@ -157,6 +158,7 @@ class ExcelWriter:
             auto_adjust_width (bool): 列幅を内容に合わせて自動調整するかどうか
             auto_adjust_height (bool): 行高を内容に合わせて自動調整するかどうか
             preserve_additional_columns (bool): J列以降の内容を保持するかどうか
+            test_type (str):       テストの種別 ("test", "ut", "it")
         """
         df_excel = self.df.copy()
         df_excel.columns = self.columns
@@ -171,9 +173,16 @@ class ExcelWriter:
             else:
                 merge_cells = False  # マージ対象の列がなければマージを無効化
 
+        # シート名を決定
+        if test_type == "ut":
+            sheet_name = self.config.excel_settings.sheet_name.ut
+        elif test_type == "it":
+            sheet_name = self.config.excel_settings.sheet_name.it
+        else:
+            sheet_name = self.config.excel_settings.sheet_name.test
+
         # シート取得
-        sheet_name = self.config.excel_settings.sheet_name.test
-        worksheet = workbook[sheet_name] if template_used else workbook.create_sheet(sheet_name)
+        worksheet = workbook[sheet_name] if template_used and sheet_name in workbook.sheetnames else workbook.create_sheet(sheet_name)
 
         # テンプレートを使用している場合、既存のシートにデータを追加する
         if template_used:
@@ -408,7 +417,8 @@ class ExcelWriter:
                         start_row = row
 
     def __call__(self, output_path: Path, merge_cells: bool = True, template_path: Path = None, 
-                auto_adjust_width: bool = True, auto_adjust_height: bool = True, preserve_additional_columns: bool = False):
+                auto_adjust_width: bool = True, auto_adjust_height: bool = True, preserve_additional_columns: bool = False,
+                test_type: str = "test"):
         """
         convert_md_to_df()により生成されたデータフレームをエクセルファイルに変換します。
 
@@ -419,6 +429,7 @@ class ExcelWriter:
             auto_adjust_width (bool):  列幅を内容に合わせて自動調整するかどうか
             auto_adjust_height (bool): 行高を内容に合わせて自動調整するかどうか
             preserve_additional_columns (bool): J列以降の内容を保持するかどうか（テンプレート使用時のみ有効）
+            test_type (str):          テストの種別 ("test", "unit_test", "integration_test")
         """
         try:
             # テンプレートが指定されている場合
@@ -433,15 +444,23 @@ class ExcelWriter:
                     workbook = load_workbook(output_path)
                 
                 # シートが存在することを確認
-                sheet_name = self.config.excel_settings.sheet_name.test
+                if test_type == "ut":
+                    sheet_name = self.config.excel_settings.sheet_name.ut
+                elif test_type == "it":
+                    sheet_name = self.config.excel_settings.sheet_name.it
+                else:
+                    sheet_name = self.config.excel_settings.sheet_name.test
+                
+                # 指定されたシートが存在しない場合は作成
                 if sheet_name not in workbook.sheetnames:
-                    raise ValueError(f"テンプレートに'{sheet_name}'シートが見つかりません。")
+                    workbook.create_sheet(sheet_name)
                 
                 # テンプレートのシートにデータを書き込む
                 self.__write_test_specification_sheet(workbook, merge_cells, template_used=True, 
                                                      auto_adjust_width=auto_adjust_width,
                                                      auto_adjust_height=auto_adjust_height,
-                                                     preserve_additional_columns=preserve_additional_columns)
+                                                     preserve_additional_columns=preserve_additional_columns,
+                                                     test_type=test_type)
                 
                 # 変更を保存
                 workbook.save(output_path)
@@ -453,7 +472,8 @@ class ExcelWriter:
                 self.__write_test_specification_sheet(workbook, merge_cells, template_used=False, 
                                                      auto_adjust_width=auto_adjust_width,
                                                      auto_adjust_height=auto_adjust_height,
-                                                     preserve_additional_columns=False)  # 新規ファイルの場合はデータ保持は無意味
+                                                     preserve_additional_columns=False,  # 新規ファイルの場合はデータ保持は無意味
+                                                     test_type=test_type)
                 
                 # 不要なSheetを削除して保存
                 if "Sheet" in workbook.sheetnames:

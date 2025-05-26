@@ -27,6 +27,8 @@ class Columns(BaseModel):
 class SheetName(BaseModel):
     summary: str = Field(..., max_length=255)
     test: str = Field(..., max_length=255)
+    ut: str = Field(..., max_length=255)
+    it: str = Field(..., max_length=255)
 
 
 class ExcelSettings(BaseModel):
