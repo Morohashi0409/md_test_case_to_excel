@@ -1,5 +1,6 @@
 include md_test_case_to_excel/config.yaml
+include md_test_case_to_excel/assets/*.xlsx
 include README.md
 include LICENSE
-recursive-include md_test_case_to_excel/assets *.xlsx
+recursive-include assets *.xlsx
 recursive-include example *.md

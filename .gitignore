@@ -125,4 +125,7 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
+# 生成されたExcelファイル (テンプレート以外)
 *.xlsx
+!assets/*.xlsx
+!md_test_case_to_excel/assets/*.xlsx
