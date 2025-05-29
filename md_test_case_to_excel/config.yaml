@@ -1,0 +1,55 @@
+# columns:
+#   [セクション名]:
+#     name: 項目列名。
+#     md_pattern: 正規表現。必ずシングルクォートで囲むこと。
+#     length: セルの幅。
+#     horizontal: セル内の文字の水平位置。center, left, right
+#     vertical: セル内の文字の垂直位置。center, top, bottom
+#     multi-idx: 複数のインデックスを持つかどうか。true, false
+columns:
+  number:
+    name: 'NO'
+    length: 6
+    horizontal: 'center'
+    vertical: 'center'
+  section:
+    name: '大分類'
+    md_pattern: '^## (.+)$'
+    length: 20
+    horizontal: 'left'
+    vertical: 'top'
+    multi-idx: true
+  subsection:
+    name: '中分類'
+    md_pattern: '^### (.+)$'
+    length: 15
+    horizontal: 'left'
+    vertical: 'top'
+    multi-idx: true
+  testcase:
+    name: '小分類'
+    md_pattern: '^#### (.+)$'
+    length: 50
+    horizontal: 'left'
+    vertical: 'top'
+    multi-idx: true
+  step:
+    name: '試験内容'
+    md_pattern: '^\d+\. (.+)$'
+    length: 70
+    horizontal: 'left'
+    vertical: 'top'
+  expectation:
+    name: '確認事項'
+    md_pattern: '^\* \[ \] (.+)$'
+    length: 70
+    horizontal: 'left'
+    vertical: 'top'
+
+excel_settings:
+  font_name: Meiryo UI
+  sheet_name:
+    summary: サマリー
+    test: テスト仕様書
+    ut: 単体試験
+    it: 結合試験
