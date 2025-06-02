@@ -41,6 +41,27 @@ pip install -r requirements.txt
 pip install -e .
 ```
 
+### 3. アンインストール方法
+
+#### pipでインストールした場合
+
+```bash
+pip uninstall md-test-case-to-excel
+```
+
+#### ソースからインストールした場合
+
+```bash
+# インストールディレクトリに移動
+cd path/to/md_test_case_to_excel
+
+# アンインストール
+pip uninstall md-test-case-to-excel
+
+# もしくは以下のコマンドでも可能
+python setup.py develop --uninstall
+```
+
 ## 使い方
 
 ### テスト仕様書を作成する
