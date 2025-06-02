@@ -1,31 +1,51 @@
 # md_test_case_to_excel
 
-Markdownで書かれたテスト仕様書をExcel形式に変換します。Markdown+GitHubでテスト仕様書を差分管理したいヒトはご活用ください。
+マークダウン形式で書いたテスト仕様書をExcel形式に変換するためのツールです。マークダウンの編集機能とGitHubでの差分管理を活用しながら、必要に応じてExcel形式で共有できます。
 
 ![](attachments/excel-image.png)
 
-## Environment
+## 環境要件
 
-本レポジトリは以下の環境でテストしています。
+- Python 3.11以上
+- 以下のPythonパッケージ:
+  - pandas 2.2.2
+  - openpyxl 3.1.5
+  - pydantic 2.9.1
+  - pyyaml 6.0.2
 
-- Windows 11
-- Python 3.11
-- pandas 2.2.2
-- openpyxl 3.1.5
-- pydantic 2.9.1
-- pyyaml 6.0.2
+## インストール手順
 
-## Get Started
+### 1. Pythonのインストール
 
-### Install dependencies
+まだPythonがインストールされていない場合は、[Python公式サイト](https://www.python.org/downloads/)からインストールしてください。
 
-```shell
-pip install -r requirements.txt
+### 2. md_test_case_to_excelのインストール
+
+#### 方法1: pipを使用してインストール
+
+```bash
+pip install md-test-case-to-excel
 ```
 
-### Write a test specification by Markdown
+#### 方法2: ソースからインストール
 
-サンプルファイルは`example/sample.md`にあります。
+```bash
+# リポジトリをクローン
+git clone https://github.com/username/md_test_case_to_excel.git
+cd md_test_case_to_excel
+
+# 依存関係をインストール
+pip install -r requirements.txt
+
+# パッケージをインストール
+pip install -e .
+```
+
+## 使い方
+
+### テスト仕様書を作成する
+
+以下の形式に従ってテスト仕様書を作成します:
 
 ```markdown
 # テスト仕様書
@@ -33,23 +53,26 @@ pip install -r requirements.txt
 ## 大項目
 ### 中項目
 #### [正常|異常|準正常] [OK|NG|未実施|--] テストケース名
-1. 確認手順
-2. 確認手順
-* [ ] 想定動作
-* [ ] 想定動作
-- 備考
+1. 確認手順1
+2. 確認手順2
+* [ ] 想定動作1
+* [ ] 想定動作2
+- 備考内容
 ```
 
-### Convert markdown to xlsx
+### Excelに変換する
 
-マークダウンファイルをエクセルファイルに変換します。
+#### コマンドラインから変換する場合
 
 ```bash
-$ python3 converter.py -h
-$ python3 converter.py -f example/sample.md --template
+# 基本的な使い方
+md-test-case-to-excel -f path/to/your/testspec.md --template
+
+# または直接Pythonモジュールを実行する場合
+python -m md_test_case_to_excel.converter -f path/to/your/testspec.md --template
 ```
 
-実行時に指定できるオプションとして以下があります。
+## コマンドラインオプション
 
 |オプション名|説明|
 |:---|:---|
@@ -61,69 +84,49 @@ $ python3 converter.py -f example/sample.md --template
 |--it| 結合試験シートに出力する（--test-type itのショートカット）|
 |--no-auto-width| 列幅の自動調整を無効にする場合に指定|
 
-## 使用例
+## 応用例
 
-### 基本的な使い方
+### 効率的なワークフロー
+
+1. **新規テスト仕様書の作成**:
+   - テンプレートファイルから新規テスト仕様書を作成
+   - マークダウン形式で作成・編集
+
+2. **バージョン管理**:
+   - Gitを使用して変更履歴を管理
+   - マークダウン形式のため、差分確認が容易
+
+3. **Excel出力と共有**:
+   - レビューや提出が必要な場合はExcel形式に変換
+   - コマンドを実行するだけで最新内容をExcelに反映
+
+### 既存Excelファイルの更新
+
+既存のExcelファイルがある場合、そのファイルに追記する形で更新できます。
+Excelファイル内のJ列以降のコメントや試験結果などのデータは自動的に保持されます。
 
 ```bash
-# テンプレートを使用して新規にファイルを作成する
-$ python3 converter.py -f example/sample.md --template
-
+# Markdownファイルを更新後、既存のExcelファイルに追記する
+md-test-case-to-excel -f example/updated_sample.md
 ```
 
-### 既存エクセルファイルの更新
-
-既にエクセルファイルがある場合、そのファイルに追記する形で更新できます。
-更新時は自動的にJ列以降のコメントや試験結果などのデータが保持されます。
-例えば、最初に作成したファイルに新しいテストケースを追加する場合：
-
-```bash
-# Markdownファイルを更新後、既存のエクセルファイルに追記する
-$ python3 converter.py -f example/updated_sample.md
-```
-
-### 複数シートへの書き込み
-
-同じMarkdownファイルを異なるシートに書き込むことができます。
+### シート選択機能
 
 ```bash
 # 単体試験シートに書き込む
-$ python3 converter.py -f example/testcases.md --ut
+md-test-case-to-excel -f example/testcases.md --ut
 
-# 結合試験シートに同じ内容を書き込む
-$ python3 converter.py -f example/testcases.md --it
+# 結合試験シートに書き込む
+md-test-case-to-excel -f example/testcases.md --it
 ```
 
-### カスタマイズの例
+## カスタマイズ
 
-列幅や自動調整などのオプションを組み合わせて使用できます。
+設定ファイル`config.yaml`を編集することで、様々なカスタマイズが可能です:
 
-```bash
-# 列幅の自動調整を無効にする
-$ python3 converter.py -f example/sample.md --no-auto-width
-
-# 既存ファイルを更新、単体試験シートに書き込み、自動列幅調整なし
-$ python3 converter.py -f example/sample.md --ut --no-auto-width
-```
-
-## シート選択機能について
-
-単体試験シートと結合試験シートのどちらに書き込むかを選択できます。
-
-```bash
-# テスト仕様書シートに書き込む（デフォルト）
-$ python3 converter.py -f example/sample.md --template
-
-# 単体試験シートに書き込む（短いオプション名）
-$ python3 converter.py -f example/sample.md --ut --template
-
-# 結合試験シートに書き込む（短いオプション名）
-$ python3 converter.py -f example/sample.md --it --template
-```
-
-## その他の設定
-
-セル幅や列名など、その他の設定は`config.yaml`を変更してください。
+- フォント名や各シート名の変更
+- 列幅や列のフォーマットの調整
+- マークダウンの解析パターンの変更
 
 ```yaml
 excel_settings:
@@ -133,66 +136,42 @@ excel_settings:
     test: テスト仕様書
     ut: 単体試験
     it: 結合試験
-```
 
-また、マークダウンの解析パターンなども設定ファイルから変更可能です：
-
-```yaml
 columns:
   number:
     name: 'NO'
     length: 6
     horizontal: 'center'
     vertical: 'center'
-  section:
-    name: '大分類'
-    md_pattern: '^## (.+)$'
-    length: 20
-    horizontal: 'left'
-    vertical: 'top'
-    multi-idx: true
-  # ... 他の設定は省略 ...
+  # 他の設定は省略
 ```
 
 ## トラブルシューティング
 
-### 既存のExcelファイルが開けない場合
+### エクセルファイルが更新できない
+エクセルファイルが他のアプリケーションで開かれていると更新できません。エラーが表示される場合は、エクセルファイルを閉じてから再実行してください。
 
-エクセルファイルが他のアプリケーションで開かれていると更新できません。以下のエラーが表示される場合は、エクセルファイルを閉じてから再実行してください。
+### テンプレートが見つからない
+`--template`オプション指定時、デフォルトでは`assets/ARMDXP_単体・結合試験_DAS-M_テンプレート_md.xlsx`を使用します。このファイルが存在しない場合は、新規にファイルを作成します。
 
-```
-出力先のファイルを開いている可能性があります。エクセルファイルを閉じてください。
-```
-
-### テンプレートファイルが見つからない場合
-
-`--template`オプションを指定した場合、デフォルトでは`assets/ARMDXP_単体・結合試験_DAS-M_テンプレート_md.xlsx`を使用します。このファイルが存在しない場合は、新規にファイルを作成します。
-
-## Release Notes
+## リリースノート
 
 ### v0.3.0 (2025/5/29)
-
 - 単体試験と結合試験のシート選択機能を追加
-- コマンドラインオプションを拡充（--ut, --it, --test-typeなど）
-- テンプレートファイル使用時の挙動を改善
-- 列幅の自動調整機能を追加
+- コマンドラインオプションを拡充
 
 ### v0.2.0 (2024/9/16)
-
 - ソースコード全体をリファクタリング
 - 設定ファイルの構造を見直し
-- 最新バージョンのpandas, openpyxl, pydantic, pyyamlに対応
-- テストケースの未実施ステータス名を変更（"--" -> "未実施"）
-- 準正常系を追加（"正常系", "異常系" -> "正常", "異常", "準正常"）
+- 最新バージョンのライブラリに対応
 
 ### v0.1.0 (2020/12/08)
+- 初回リリース
 
-- First Commit!
+## 謝辞
 
-## Acknowledgements
+マークダウン形式は[ryuta46/eval-spec-maker](https://github.com/ryuta46/eval-spec-maker)を参考にしています。Pythonコードは[torisawa/convert.py](https://gist.github.com/toriwasa/37c690862ddf67d43cfd3e1af4e40649)を参考にしています。
 
-The format of markdown borrows heavily from [ryuta46/eval-spec-maker](https://github.com/ryuta46/eval-spec-maker). The python code borrows from [torisawa/convert.py](https://gist.github.com/toriwasa/37c690862ddf67d43cfd3e1af4e40649)
+## 制限事項
 
-## Limitations
-
-Headers in xlsx are in Japanese only.
+- Excelヘッダーは日本語のみ対応しています
