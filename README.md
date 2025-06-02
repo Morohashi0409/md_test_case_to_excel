@@ -27,6 +27,13 @@
 pip install md-test-case-to-excel
 ```
 
+インストール後、コマンドが認識されない場合は、Pythonのスクリプトディレクトリがパスに追加されていない可能性があります。以下の方法で実行できます：
+
+```bash
+# コマンドが見つからない場合は、pythonモジュールとして直接実行
+python -m md_test_case_to_excel.converter -f your_file.md --template
+```
+
 #### 方法2: ソースからインストール
 
 ```bash
@@ -86,19 +93,22 @@ python setup.py develop --uninstall
 #### コマンドラインから変換する場合
 
 ```bash
-# 基本的な使い方
-md-test-case-to-excel -f path/to/your/testspec.md --template
+# 基本的な使い方（-fオプションは必須です）
+md2excel -f path/to/your/testspec.md --template
 
-# または直接Pythonモジュールを実行する場合
+# コマンドが見つからない場合は、pythonモジュールとして直接実行
 python -m md_test_case_to_excel.converter -f path/to/your/testspec.md --template
+
+# またはconverter.pyを直接実行する方法
+python /path/to/md_test_case_to_excel/converter.py -f path/to/your/testspec.md --template
 ```
 
 ## コマンドラインオプション
 
 |オプション名|説明|
 |:---|:---|
+|-f, --file| 入力ファイルパス（**必須**）|
 |-h, --help| 引数のヘルプ表示|
-|-f, --file| 入力ファイルパス|
 |--template| テンプレートExcelファイルを使用する場合に指定|
 |--test-type| テストの種別（test:テスト仕様書、ut:単体試験、it:結合試験）|
 |--ut| 単体試験シートに出力する（--test-type utのショートカット）|
@@ -128,17 +138,17 @@ Excelファイル内のJ列以降のコメントや試験結果などのデー�
 
 ```bash
 # Markdownファイルを更新後、既存のExcelファイルに追記する
-md-test-case-to-excel -f example/updated_sample.md
+md2excel -f example/updated_sample.md
 ```
 
 ### シート選択機能
 
 ```bash
 # 単体試験シートに書き込む
-md-test-case-to-excel -f example/testcases.md --ut
+md2excel -f example/testcases.md --ut
 
 # 結合試験シートに書き込む
-md-test-case-to-excel -f example/testcases.md --it
+md2excel -f example/testcases.md --it
 ```
 
 ## カスタマイズ
